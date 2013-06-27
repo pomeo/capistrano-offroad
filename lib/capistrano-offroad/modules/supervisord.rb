@@ -18,21 +18,21 @@ Capistrano::Configuration.instance(:must_exist).load do
     def supervisorctl(cmd, options={})
       try_start = options.delete(:try_start) {|k| true}
 
-      full_command = "#{supervisord_path}#{supervisorctl_command} -c #{current_path}/#{supervisord_conf} #{cmd}"
+      full_command = "#{sudo} #{supervisord_path}#{supervisorctl_command} #{cmd}"
       after_start = (full_command if options.delete(:run_when_started)) || ""
 
       if not try_start then
         run full_command, options
       else
         run <<-EOF, options
-        if test -f #{shared_path}/#{supervisord_pidfile}
+        if test -f #{supervisord_pidfile}
              && ps #{supervisord_pid} > /dev/null ;
         then
           echo "supervisord seems to be up, good" ;
           #{full_command} ;
         else
           echo "starting supervisord" ;
-          #{sudo :as => deploy_user} #{supervisord_path}#{supervisord_command} -c #{current_path}/#{supervisord_conf} ;
+          #{sudo} #{supervisord_path}#{supervisord_command} ;
           #{after_start}
         fi
     EOF
