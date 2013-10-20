@@ -9,7 +9,7 @@ Capistrano::Configuration.instance(:must_exist).load do
   set :supervisord_stop_group, nil  # process group to stop on deploy:stop - nil means all processes
 
   namespace :deploy do
-    def supervisord_pidfile_path ; "#{shared_path}/#{supervisord_pidfile}" end
+    def supervisord_pidfile_path ; "#{supervisord_pidfile}" end
     def supervisord_pid ; "`cat #{supervisord_pidfile_path}`" end
 
     # Run supervisorctl command `cmd'.
