@@ -4,7 +4,7 @@ Capistrano::Configuration.instance(:must_exist).load do
   set :supervisord_path, ""     # directory where supervisord binaries reside
   set :supervisord_command, "supervisord"
   set :supervisorctl_command, "supervisorctl"
-  set :supervisord_pidfile, "supervisord.pid"
+  set :supervisord_pidfile, "/var/run/supervisord.pid"
   set :supervisord_start_group, nil # process group to start on deploy:start - nil means all processes
   set :supervisord_stop_group, nil  # process group to stop on deploy:stop - nil means all processes
 
