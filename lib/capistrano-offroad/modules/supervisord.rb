@@ -2,19 +2,17 @@ require 'capistrano'
 
 Capistrano::Configuration.instance(:must_exist).load do
   set :supervisord_path, ""     # directory where supervisord binaries reside
-  set :supervisord_command, "supervisord"
   set :supervisorctl_command, "supervisorctl"
   set :supervisord_pidfile, "/var/run/supervisord.pid"
   set :supervisord_start_group, nil # process group to start on deploy:start - nil means all processes
   set :supervisord_stop_group, nil  # process group to stop on deploy:stop - nil means all processes
 
   namespace :deploy do
-    def supervisord_pidfile_path ; "#{supervisord_pidfile}" end
-    def supervisord_pid ; "`cat #{supervisord_pidfile_path}`" end
+    def supervisord_pid ; "`cat #{supervisord_pidfile}`" end
 
     # Run supervisorctl command `cmd'.
     def supervisorctl(cmd, options={})
-      full_command = "#{sudo} #{supervisord_path}#{supervisorctl_command} #{cmd}"
+      full_command = "#{sudo} #{supervisorctl_command} #{cmd}"
       run full_command, options
     end
 
@@ -34,13 +32,13 @@ Capistrano::Configuration.instance(:must_exist).load do
     desc "Start processes"
     task :start do
       to_start = _target(:supervisord_start_group)
-      supervisorctl "start #{to_start}", :try_start => true
+      supervisorctl "start #{to_start}"
     end
 
     desc "Stop processes"
     task :stop do
       to_stop = _target(:supervisord_stop_group)
-      supervisorctl "stop #{to_stop}", :try_start => false
+      supervisorctl "stop #{to_stop}"
     end
 
     desc "Restart processes"
@@ -51,12 +49,12 @@ Capistrano::Configuration.instance(:must_exist).load do
 
     desc "Display status of processes"
     task :status do
-      supervisorctl "status", :try_start => false
+      supervisorctl "status"
     end
 
     desc "Display detailed list of processes"
     task :processes do
-      run "test -f #{supervisord_pidfile_path} && pstree -a #{supervisord_pid}"
+      run "test -f #{supervisord_pidfile} && pstree -a #{supervisord_pid}"
     end
 
     desc "Reload supervisor daemon"
