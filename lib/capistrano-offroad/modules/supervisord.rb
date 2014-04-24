@@ -13,30 +13,9 @@ Capistrano::Configuration.instance(:must_exist).load do
     def supervisord_pid ; "`cat #{supervisord_pidfile_path}`" end
 
     # Run supervisorctl command `cmd'.
-    # If options[:try_start] is true (default) and supervisord is not running, start it.
-    # If just started supervisord, and options[:run_when_started] is false (default), skip running supervisorctl
     def supervisorctl(cmd, options={})
-      try_start = options.delete(:try_start) {|k| true}
-
       full_command = "#{sudo} #{supervisord_path}#{supervisorctl_command} #{cmd}"
-      after_start = (full_command if options.delete(:run_when_started)) || ""
-
-      if not try_start then
-        run full_command, options
-      else
-        run <<-EOF, options
-        if test -f #{supervisord_pidfile}
-             && ps #{supervisord_pid} > /dev/null ;
-        then
-          echo "supervisord seems to be up, good" ;
-          #{full_command} ;
-        else
-          echo "starting supervisord" ;
-          #{sudo} #{supervisord_path}#{supervisord_command} ;
-          #{after_start}
-        fi
-    EOF
-      end
+      run full_command, options
     end
 
     def _target(var)
@@ -87,7 +66,7 @@ Capistrano::Configuration.instance(:must_exist).load do
 
     task :run_supervisorctl do
       set_from_env_or_ask :command, "supervisorctl command: "
-      supervisorctl "#{command}", :try_start => false
+      supervisorctl "#{command}"
     end
   end
 end
