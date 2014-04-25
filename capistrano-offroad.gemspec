@@ -20,7 +20,7 @@ EOF
   s.homepage = "http://github.com/mpasternacki/capistrano-offroad"
   s.licenses = ['BSD']
 
-  s.add_dependency "capistrano", "= 2.5.15"
+  s.add_dependency "capistrano", "= 2.15.5"
 
   s.required_rubygems_version = ">= 1.3.6"
   s.files = Dir.glob("lib/**/*.rb") + %w(README LICENSE)
