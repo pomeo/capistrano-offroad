@@ -18,7 +18,7 @@ Capistrano::Configuration.instance(:must_exist).load do
   namespace :deploy do
     desc "Install node modules non-globally"
     task :npm_install do
-      run ". /home/ubuntu/.nvm/nvm.sh && cd #{current_path} && npm install"
+      run ". /home/ubuntu/.nvm/nvm.sh && cd #{current_path} && npm install --production"
     end
   end
 end
